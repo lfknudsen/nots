@@ -20,7 +20,7 @@ func main() {
 		lines := bytes.Lines(bs)
 		outlines := make([][]byte, 0, 1000)
 		for line := range lines {
-			outlines = append(outlines, bytes.TrimRight(line, " "))
+			outlines = append(outlines, bytes.TrimRight(line, " \t"))
 		}
 		err = os.WriteFile(filename, bytes.Join(outlines, []byte("")), 0644)
 		if err != nil {
