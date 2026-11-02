@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"slices"
 )
 
 func main() {
@@ -17,12 +18,21 @@ func main() {
 			fmt.Printf("Error reading file %q: %v\n", filename, err)
 			continue
 		}
-		lines := bytes.Lines(bs)
-		outlines := make([][]byte, 0, 1000)
-		for line := range lines {
-			outlines = append(outlines, bytes.TrimRight(line, " \t"))
+		lineSeq := bytes.Lines(bs)
+		lines := slices.Collect(lineSeq)
+		if lines == nil {
+			return
 		}
-		err = os.WriteFile(filename, bytes.Join(outlines, []byte("")), 0644)
+		lineEnding := []byte("\n")
+		winLineEnd := []byte("\r\n")
+		if bytes.HasSuffix(lines[0], winLineEnd) {
+			lineEnding = winLineEnd
+		}
+		outlines := make([][]byte, 0, 1000)
+		for _, line := range lines {
+			outlines = append(outlines, append(bytes.TrimRight(line, " \t\r\n"), lineEnding...))
+		}
+		err = os.WriteFile(filename, slices.Concat(outlines...), 0644)
 		if err != nil {
 			fmt.Printf("Error writing file %q: %v\n", filename, err)
 			continue
