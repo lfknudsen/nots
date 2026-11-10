@@ -12,6 +12,7 @@ func main() {
 		fmt.Println("Nots - \033[94mNO T\033[0mrailing \u001B[94mS\u001B[0mpaces\nUsage:\n\t\u001B[93mnots\u001B[0m <filename(s)...>")
 		os.Exit(1)
 	}
+	changed := false
 	for _, filename := range os.Args[1:] {
 		bs, err := os.ReadFile(filename)
 		if err != nil {
@@ -30,12 +31,18 @@ func main() {
 		}
 		outlines := make([][]byte, 0, 1000)
 		for _, line := range lines {
-			outlines = append(outlines, append(bytes.TrimRight(line, " \t\r\n"), lineEnding...))
+			after := append(bytes.TrimRight(line, " \t\r\n"), lineEnding...)
+			if bytes.Compare(after, line) != 0 {
+				changed = true
+			}
+			outlines = append(outlines, after)
 		}
-		err = os.WriteFile(filename, slices.Concat(outlines...), 0644)
-		if err != nil {
-			fmt.Printf("Error writing file %q: %v\n", filename, err)
-			continue
+		if changed {
+			err = os.WriteFile(filename, slices.Concat(outlines...), 0644)
+			if err != nil {
+				_, _ = fmt.Fprintf(os.Stderr, "Error writing file %q: %v\n", filename, err)
+				continue
+			}
 		}
 	}
 }
