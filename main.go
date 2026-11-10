@@ -9,7 +9,8 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Nots - \033[94mNO T\033[0mrailing \u001B[94mS\u001B[0mpaces\nUsage:\n\t\u001B[93mnots\u001B[0m <filename(s)...>")
+		fmt.Println("Nots - \033[94mNO T\033[0mrailing \u001B[94mS\u001B[0mpaces\nUsage:\n" +
+			"\t\u001B[93mnots\u001B[0m <filename(s)...>")
 		os.Exit(1)
 	}
 	changed := false
