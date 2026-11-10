@@ -33,9 +33,7 @@ func main() {
 		outlines := make([][]byte, 0, 1000)
 		for _, line := range lines {
 			after := append(bytes.TrimRight(line, " \t\r\n"), lineEnding...)
-			if bytes.Compare(after, line) != 0 {
-				changed = true
-			}
+			changed = changed || bytes.Compare(after, line) != 0
 			outlines = append(outlines, after)
 		}
 		if changed {
