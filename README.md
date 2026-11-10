@@ -10,5 +10,5 @@ go build
 
 Usage:
 ```
-notes <file(s)...>
+nots <file(s)...>
 ```
